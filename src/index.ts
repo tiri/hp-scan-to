@@ -5,7 +5,7 @@
 
 import os from "os";
 import fs from "fs/promises";
-import { Command } from "commander";
+import { Command, Option } from "commander";
 import Bonjour from "bonjour";
 
 import Destination from "./Destination";
@@ -573,28 +573,40 @@ function findOfficejetIp(): Promise<string> {
 }
 
 async function main() {
-  program.option(
-    "-ip, --address <ip>",
-    "IP address of the printer (this overrides -p)"
+  program.addOption(
+    new Option(
+      "-ip, --address <ip>",
+      "IP address of the printer (this overrides -p)"
+    ).env("IP")
   );
-  program.option(
-    "-n, --name <name>",
-    "Name of the printer for service discovery",
-    "HP Smart Tank Plus 570 series"
-  ); //or i.e. 'Deskjet 3520 series'
-  program.option(
-    "-d, --directory <dir>",
-    "Directory where scans are saved (defaults to /tmp/scan-to-pc<random>)"
+  program.addOption(
+    new Option("-n, --name <name>", "Name of the printer for service discovery")
+      .default("HP Smart Tank Plus 570 series")
+      .env("NAME")
   );
-  program.option(
-    "-t, --temp-directory <dir>",
-    "Temp directory used for processing (defaults to /tmp/scan-to-pc<random>)"
+  program.addOption(
+    new Option(
+      "-d, --directory <dir>",
+      "Directory where scans are saved (defaults to /tmp/scan-to-pc<random>)"
+    ).env("DIR")
   );
-  program.option(
-    "-p, --pattern <pattern>",
-    'Pattern for filename (i.e. "scan"_dd.mm.yyyy_hh:MM:ss, without this its scanPage<number>)'
+  program.addOption(
+    new Option(
+      "-t, --temp-directory <dir>",
+      "Temp directory used for processing (defaults to /tmp/scan-to-pc<random>)"
+    ).env("TEMP_DIR")
   );
-  program.option("-D, --debug", "Enable debug");
+  program.addOption(
+    new Option(
+      "-p, --pattern <pattern>",
+      'Pattern for filename (i.e. "scan"_dd.mm.yyyy_hh:MM:ss, without this its scanPage<number>)'
+    ).env("PATTERN")
+  );
+  program.addOption(
+    new Option("-D, --debug", "Enable debug")
+    .default("false")
+    .env("DEBUG")
+  );
   program.parse(process.argv);
 
   let ip = program.opts().address || "192.168.1.53";
@@ -602,9 +614,7 @@ async function main() {
     ip = await findOfficejetIp();
   }
 
-  const debug = program.opts().debug != null;
-
-  HPApi.setDebug(debug);
+  HPApi.setDebug(!!program.opts().debug);
   HPApi.setPrinterIP(ip);
   await init();
 }
