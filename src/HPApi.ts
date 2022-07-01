@@ -138,7 +138,6 @@ export default class HPApi {
   static async removeDestination(
     walkupScanDestination: WalkupScanDestination | WalkupScanToCompDestination
   ) {
-
     let path: string;
 
     if (walkupScanDestination.resourceURI.startsWith("http")) {
