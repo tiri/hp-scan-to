@@ -537,11 +537,12 @@ async function init() {
       console.log(e);
     }
 
-    if (errorCount === 50) {
-      keepActive = false;
-    }
+    // disable stop retrying
+    // if (errorCount === 50) {
+    //  keepActive = false;
+    // }
 
-    await delay(1000);
+     await delay(5000);
   }
 }
 
