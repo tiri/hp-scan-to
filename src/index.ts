@@ -579,14 +579,14 @@ async function init() {
   );
   console.log(`Temp folder: ${tempFolder}`);
 
-  const deviceCapabilities = await readDeviceCapabilities();
-
   let scanCount = 0;
   let keepActive = true;
   let errorCount = 0;
+  
   while (keepActive) {
     console.log(`Running iteration: ${iteration} - errorCount: ${errorCount}`);
     try {
+      const deviceCapabilities = await readDeviceCapabilities();
       let resourceURI: string;
       if (deviceCapabilities.useWalkupScanToComp) {
         resourceURI = await registerWalkupScanToCompDestination();
@@ -602,8 +602,8 @@ async function init() {
       await saveScan(event, folder, tempFolder, scanCount, deviceCapabilities);
     } catch (e) {
       errorCount++;
-      console.error(e);
-      console.log(e);
+      //console.error(e);
+      //console.log(e);
     }
 
     // disable stop retrying
@@ -611,7 +611,7 @@ async function init() {
     //  keepActive = false;
     // }
 
-     await delay(5000);
+     await delay(15000);
   }
 }
 
