@@ -3,6 +3,5 @@
 /dist/
 /coverage/
 /.nyc_output/
-/package-lock.json
 /yarn-error.log
 /test/asset/adf_bytes_scan_height_fixed.jpg
