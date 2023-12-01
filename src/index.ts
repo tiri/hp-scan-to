@@ -197,49 +197,73 @@ function getConfig<T>(name: string): T | undefined {
 }
 
 function setupScanParameters(command: Command): Command {
-  command.option(
-    "-d, --directory <dir>",
-    "Directory where scans are saved (default: /tmp/scan-to-pc<random>)",
+  command.addOption(
+    new Option(
+      "-d, --directory <dir>",
+      "Directory where scans are saved (default: /tmp/scan-to-pc<random>)",
+    ).env("DIR")
   );
-  command.option(
-    "-t, --temp-directory <dir>",
-    "Temp directory used for processing (default: /tmp/scan-to-pc<random>)",
+  command.addOption(
+    new Option(
+      "-t, --temp-directory <dir>",
+      "Temp directory used for processing (default: /tmp/scan-to-pc<random>)",
+    ).env("TEMP_DIR")
   );
-  command.option(
-    "-p, --pattern <pattern>",
-    'Pattern for filename (i.e. "scan"_dd.mm.yyyy_hh:MM:ss, without this its scanPage<number>)',
+  command.addOption(
+    new Option(
+      "-p, --pattern <pattern>",
+      'Pattern for filename (i.e. "scan"_dd.mm.yyyy_hh:MM:ss, without this its scanPage<number>)',
+    ).env("PATTERN")
   );
-  command.option(
-    "-r, --resolution <dpi>",
-    "Resolution in DPI of the scans (default: 200)",
+  command.addOption(
+    new Option(
+      "-r, --resolution <dpi>",
+      "Resolution in DPI of the scans (default: 200)",
+    ).env("RESOLUTION")
   );
-  command.option(
-    "-w, --width <width>",
-    "With in pixel of the scans (default: 2481)",
+  command.addOption(
+    new Option(
+      "-w, --width <width>",
+      "With in pixel of the scans (default: 2481)",
+    ).env("WIDTH")
   );
-  command.option(
-    "-h, --height <height>",
-    "Height in pixel of the scans (default: 3507)",
+  command.addOption(
+    new Option(
+      "-h, --height <height>",
+      "Height in pixel of the scans (default: 3507)",
+    ).env("HEIGHT")
   );
   return command;
 }
 
 function setupParameterOpts(command: Command): Command {
-  command.option(
-    "-ip, --address <ip>",
-    "IP address of the device (this overrides -p)",
+  command.addOption(
+    new Option(
+      "-ip, --address <ip>",
+      "IP address of the device (this overrides -p)",
+    )
+    .env("IP")
   );
-  command.option(
-    "--device-up-polling-interval <deviceUpPollingInterval>",
-    "Device up polling interval in milliseconds",
-    parseFloat,
+  command.addOption(
+    new Option(
+      "--device-up-polling-interval <deviceUpPollingInterval>",
+      "Device up polling interval in milliseconds",
+    )
+    .argParser(parseFloat)
+    .env("DEVICE_UP_POLLING_INTERVAL")
   );
-  command.option(
-    "-n, --name <name>",
-    "Name of the device for service discovery",
+  command.addOption(
+    new Option(
+      "-n, --name <name>",
+      "Name of the device for service discovery",
+    )
+    .env("NAME")
   ); // i.e. 'Deskjet 3520 series'
 
-  command.option("-D, --debug", "Enable debug");
+  command.addOption(
+    new Option("-D, --debug", "Enable debug")
+    .env("DEBUG")
+  );
   return command;
 }
 
@@ -315,9 +339,11 @@ async function main() {
   const cmdListen = program.createCommand("listen");
   setupScanParameters(cmdListen)
     .description("Listen the device for new scan job to save to this target")
-    .option(
-      "-l, --label <label>",
-      "The label to display on the device (the default is the hostname)",
+    .addOption(
+      new Option(
+        "-l, --label <label>",
+        "The label to display on the device (the default is the hostname)",
+      ).env("LABEL")
     )
     .action(async (options, cmd) => {
       const parentOption = cmd.parent.opts();
